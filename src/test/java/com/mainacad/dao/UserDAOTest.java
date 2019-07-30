@@ -36,6 +36,12 @@ class UserDAOTest {
         User checkedUserInDB = UserDAO.findById(userInDB.getId());
         assertNotNull(checkedUserInDB);
 
+        User checkedUserInDBByLogin = UserDAO.findByLogin(userInDB.getLogin());
+        assertNotNull(checkedUserInDBByLogin);
+
+        User checkedInDBByAll = UserDAO.findAll();
+        assertNotNull(checkedInDBByAll);
+
         UserDAO.delete(checkedUserInDB.getId());
         User deletedUser = UserDAO.findById(userInDB.getId());
         assertNull(deletedUser);
