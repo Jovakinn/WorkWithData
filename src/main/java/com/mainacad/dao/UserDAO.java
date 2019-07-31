@@ -6,8 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
 
 public class UserDAO {
 
@@ -92,7 +90,7 @@ public class UserDAO {
         try (Connection connection = ConnectionToDB.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ){
-            preparedStatement.setString(1,login);
+            preparedStatement.setString(2,login);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
@@ -105,8 +103,6 @@ public class UserDAO {
 
                 return user;
             }
-
-
         } catch (SQLException e){
             e.getStackTrace();
         }
@@ -122,16 +118,15 @@ public class UserDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
 
-                Integer id = resultSet.getInt(1);
-                String login = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                String first_name = resultSet.getString(4);
-                String last_name = resultSet.getString(5);
-                User user = new User(id, login, password, first_name, last_name);
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setLogin(resultSet.getString("login"));
+                user.setPassword(resultSet.getString("password"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
 
                 return user;
             }
-
         } catch (SQLException e){
             e.getStackTrace();
         }
