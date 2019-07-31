@@ -86,11 +86,11 @@ public class UserDAO {
 
     public static User findByLogin(String login) {
 
-        String sql = "SELECT * FROM users WHERE id=?";
+        String sql = "SELECT * FROM users WHERE login=?";
         try (Connection connection = ConnectionToDB.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ){
-            preparedStatement.setString(2,login);
+            preparedStatement.setString(1,login);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){

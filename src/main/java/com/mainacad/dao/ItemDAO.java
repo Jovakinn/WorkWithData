@@ -110,12 +110,12 @@ public class ItemDAO {
 
     public static Item findByItemCode(String itemCode){
 
-        String sql = "SELECT * FROM items WHERE id=?";
+        String sql = "SELECT * FROM items WHERE item_code=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ){
-            preparedStatement.setString(2,itemCode);
+            preparedStatement.setString(1,itemCode);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
