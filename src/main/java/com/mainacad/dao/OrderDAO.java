@@ -1,6 +1,5 @@
 package com.mainacad.dao;
 
-import com.mainacad.model.Cart;
 import com.mainacad.model.Order;
 
 import java.sql.Connection;
@@ -15,13 +14,15 @@ public class OrderDAO {
 
     private static Logger logger = Logger.getLogger(OrderDAO.class.getName());
 
-    public static Order create (Order order){
+    public static Order create(Order order){
+
         String sql = "INSERT INTO orders(item_id, amount, cart_id) VALUES(?,?,?)";
         String sequenceSql = "SELECT currval(pg_get_serial_sequence('orders','id'))";
 
         try (Connection connection = ConnectionToDB.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             PreparedStatement seqStatement = connection.prepareStatement(sequenceSql)) {
+             PreparedStatement seqStatement = connection.prepareStatement(sequenceSql)
+        ){
 
             preparedStatement.setInt(1, order.getItemId());
             preparedStatement.setInt(2, order.getAmount());
@@ -30,7 +31,6 @@ public class OrderDAO {
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = seqStatement.executeQuery();
-
             while (resultSet.next()) {
                 Integer id = resultSet.getInt(1);
                 order.setId(id);
@@ -44,18 +44,36 @@ public class OrderDAO {
         return null;
     }
 
-    public static Order update (Order order){
+    public static Order update(Order order){
 
-        return null;
-    }
-
-    public static Order findById (Integer id){
-        String sql = "SELECT * FROM orders WHERE id=?";
+        String sql = "UPDATE orders SET item_id=?, amount=?, cart_id=? WHERE id=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ) {
-            preparedStatement.setInt(1,id);
+
+            preparedStatement.setInt(1, order.getItemId());
+            preparedStatement.setInt(2, order.getAmount());
+            preparedStatement.setInt(3, order.getCartId());
+            preparedStatement.setInt(4, order.getId());
+
+            preparedStatement.executeUpdate();
+            return order;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Order findById(Integer id){
+        String statement = "SELECT * FROM orders WHERE id=?";
+
+        try (Connection connection = ConnectionToDB.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+
+            preparedStatement.setInt(1, id);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -68,19 +86,22 @@ public class OrderDAO {
 
                 return order;
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public static List<Order> findByCard (Integer cartId){
+
+    public static List<Order> findByCart(Integer cartId){
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE cart_id=?";
+        String statement = "SELECT * FROM orders WHERE cart_id=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        ) {
-            preparedStatement.setInt(1,cartId);
+             PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+
+            preparedStatement.setInt(1, cartId);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -93,23 +114,24 @@ public class OrderDAO {
 
                 orders.add(order);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return null;
+        return orders;
     }
 
 
 
-    public static void delete (Integer id){
-        String sql = "DELETE FROM orders WHERE id=?";
+    public static void delete(Integer id){
+        String statement = "DELETE FROM orders WHERE id=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        ) {
+             PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,13 +139,13 @@ public class OrderDAO {
 
     public static List<Order> findClosedOrdersByUserAndPeriod(Integer userId, Long from, Long to) {
         String sql = "SELECT o.id, o.item_id, o.amount, o.cart_id FROM orders o " +
-                "JOIN carts AS c ON o.cart_id=c.id " +
+                "JOIN carts c ON o.cart_id=c.id " +
                 "WHERE " +
                 "c.user_id=? AND " +
                 "c.creation_time>=? AND " +
-                "c.creation_time>=?";
+                "c.creation_time>=? " +
+                "ORDER BY c.creation_time";
 
         return null;
     }
 }
-

@@ -20,6 +20,7 @@ public class CartDAO {
     private static Logger logger = Logger.getLogger(OrderDAO.class.getName());
 
     public static Cart create(Cart cart){
+
         String sql = "INSERT INTO carts(creation_time, closed, user_id) VALUES(?,?,?)";
         String sequenceSql = "SELECT currval(pg_get_serial_sequence('carts','id'))";
 
@@ -44,8 +45,6 @@ public class CartDAO {
         } catch (SQLException e){
             e.printStackTrace();
         }
-
-
         return null;
     }
 
