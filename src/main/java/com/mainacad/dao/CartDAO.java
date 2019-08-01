@@ -1,12 +1,12 @@
 package com.mainacad.dao;
 
 import com.mainacad.model.Cart;
-import com.mainacad.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -51,7 +51,22 @@ public class CartDAO {
 
     public static Cart update(Cart cart){
 
+        String sql = "UPDATE carts SET creation_time=?, closed=?, user_id=? WHERE id=?";
 
+        try (Connection connection = ConnectionToDB.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ) {
+
+            preparedStatement.setLong(1, cart.getCreationTime());
+            preparedStatement.setBoolean(2, cart.getClosed());
+            preparedStatement.setInt(3, cart.getUserId());
+            preparedStatement.setInt(4, cart.getId());
+
+            preparedStatement.executeUpdate();
+            return cart;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
     public static Cart findbyId(Integer id){
@@ -80,9 +95,29 @@ public class CartDAO {
         return null;
     }
 
-    public static List<Cart> findByUser(User user){
+    public static List<Cart> findByUser(Integer userId){
+        List<Cart> carts = new ArrayList<>();
+        String sql = "SELECT * FROM carts WHERE user_id=?";
 
+        try (Connection connection = ConnectionToDB.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ) {
+            preparedStatement.setInt(1,userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
+            while (resultSet.next()) {
+                Cart cart = new Cart();
+
+                cart.setId(resultSet.getInt("id"));
+                cart.setCreationTime(resultSet.getLong("creation_time"));
+                cart.setClosed(resultSet.getBoolean("closed"));
+                cart.setUserId(resultSet.getInt("user_id"));
+
+                carts.add(cart);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
