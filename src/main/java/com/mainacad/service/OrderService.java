@@ -23,7 +23,7 @@ public class OrderService {
         return OrderDAO.create(order);
     }
 
-    public static List<Order> getOrdersByCards(Cart cart){
+    public static List<Order> getOrdersByCard(Cart cart){
         return OrderDAO.findByCart(cart.getId());
     }
 

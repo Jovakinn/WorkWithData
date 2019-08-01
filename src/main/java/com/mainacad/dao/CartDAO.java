@@ -68,7 +68,7 @@ public class CartDAO {
         }
         return null;
     }
-    public static Cart findbyId(Integer id){
+    public static Cart findById(Integer id){
         String sql = "SELECT * FROM carts WHERE id=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
