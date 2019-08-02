@@ -117,11 +117,11 @@ public class CartDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return carts;
     }
 
     public static Cart findOpenCartByUser(Integer userId){
-        String statement = "SELECT * FROM carts WHERE closed=0 AND user_id=?";
+        String statement = "SELECT * FROM carts WHERE closed=false AND user_id=?";
 
         try (Connection connection = ConnectionToDB.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(statement)){
