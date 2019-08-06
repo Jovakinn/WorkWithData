@@ -3,6 +3,7 @@ package com.mainacad.dao;
 import com.mainacad.model.Item;
 import org.junit.jupiter.api.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,14 +20,13 @@ class ItemDAOTest {
 
     @AfterAll
     static void tearDown() {
-        for (Item item : items) {
-            if (item.getId() != null)
-                ItemDAO.delete(item.getId());
-        }
+        items.stream().forEach(item -> ItemDAO.delete(item.getId()));
     }
 
     @Test
     void createAndFindAndDelete() {
+        Date date = new Date();
+
         assertNull(items.get(0).getId());
         Item itemInDB = ItemDAO.create(items.get(0));
 
@@ -41,6 +41,10 @@ class ItemDAOTest {
 
         Item checkedItemInDBByAll = ItemDAO.findAll();
         assertNotNull(checkedItemInDBByAll);
+
+        List<Item> checkedGetSum = ItemDAO.getSumOfAllOrdersByUserIdAndPeriod(itemInDB.getId(),
+                date.getTime(), date.getTime());
+        assertNotNull(checkedGetSum);
 
         ItemDAO.delete(checkedItemInDB.getId());
         Item deletedItem = ItemDAO.findById(itemInDB.getId());

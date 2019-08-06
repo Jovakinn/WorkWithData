@@ -25,10 +25,7 @@ class CartDAOTest {
 
     @AfterEach
     void tearDown() {
-        for (Cart cart : carts) {
-            if (cart.getId() != null)
-                ItemDAO.delete(cart.getId());
-        }
+        carts.stream().forEach(cart -> ItemDAO.delete(cart.getId()));
     }
 
     @Test

@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemDAO {
 
@@ -147,16 +149,37 @@ public class ItemDAO {
         }
     }
 
-    public static Integer getSumOfAllOrdersByUserIdAndPeriod(Integer userId, Long from, Long to){
+    public static List<Item> getSumOfAllOrdersByUserIdAndPeriod(Integer userId, Long from, Long to){
         String sql = "SELECT SUM(i.price*o.amount) " + "FROM items i " +
                     "JOIN orders o ON o.item_id = i.id " +
-                    "JOIN carts c ON o.cart_id = c.id" +
-                "WHERE c.user_id=2 AND " +
+                    "JOIN carts c ON o.cart_id = c.id " +
+                    "WHERE c.user_id=2 AND " +
                     "c.creation_time>1564088300000 AND " +
-                    "c.creation_time<1564088500000 AND" +
+                    "c.creation_time<1564088500000 AND " +
                     "c.closed=true";
 
+        List<Item> items = new ArrayList<>();
 
-        return null;
+        try (Connection connection = ConnectionToDB.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setLong(2, from);
+            preparedStatement.setLong(3, to);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Item item = new Item();
+
+                item.setPrice(resultSet.getInt("price"));
+                items.add(item);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
     }
 }

@@ -158,6 +158,7 @@ public class  OrderDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+
                 Order order = new Order();
 
                 order.setId(resultSet.getInt("id"));
