@@ -143,7 +143,7 @@ public class OrderDAO {
                 "WHERE " +
                 "c.user_id=? AND " +
                 "c.creation_time>=? AND " +
-                "c.creation_time>=? " +
+                "c.creation_time<=? " +
                 "ORDER BY c.creation_time";
 
         return null;

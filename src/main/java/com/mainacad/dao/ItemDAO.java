@@ -146,4 +146,17 @@ public class ItemDAO {
             e.printStackTrace();
         }
     }
+
+    public static Integer getSumOfAllOrdersByUserIdAndPeriod(Integer userId, Long from, Long to){
+        String sql = "SELECT SUM(i.price*o.amount) " + "FROM items i\n" +
+                    "JOIN orders o ON o.item_id = i.id " +
+                    "JOIN carts c ON o.cart_id = c.id" +
+                "WHERE c.user_id=2 AND " +
+                    "c.creation_time>1564088300000 AND " +
+                    "c.creation_time<1564088500000 AND" +
+                    "c.closed=true";
+
+
+        return null;
+    }
 }
