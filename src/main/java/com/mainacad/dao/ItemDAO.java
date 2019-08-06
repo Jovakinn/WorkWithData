@@ -148,7 +148,7 @@ public class ItemDAO {
     }
 
     public static Integer getSumOfAllOrdersByUserIdAndPeriod(Integer userId, Long from, Long to){
-        String sql = "SELECT SUM(i.price*o.amount) " + "FROM items i\n" +
+        String sql = "SELECT SUM(i.price*o.amount) " + "FROM items i " +
                     "JOIN orders o ON o.item_id = i.id " +
                     "JOIN carts c ON o.cart_id = c.id" +
                 "WHERE c.user_id=2 AND " +

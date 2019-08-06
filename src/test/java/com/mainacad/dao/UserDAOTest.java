@@ -1,12 +1,15 @@
 package com.mainacad.dao;
 
 import com.mainacad.model.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserDAOTest {
 
@@ -19,10 +22,7 @@ class UserDAOTest {
 
     @AfterAll
     static void tearDown() {
-        for (User user: users) {
-            if (user.getId() != null)
-            UserDAO.delete(user.getId());
-        }
+        users.stream().forEach(user -> UserDAO.delete(user.getId()));
     }
 
     @Test
