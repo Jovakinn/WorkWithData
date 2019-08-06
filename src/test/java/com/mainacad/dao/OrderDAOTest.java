@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,14 +24,12 @@ class OrderDAOTest {
 
     @AfterEach
     void tearDown() {
-        for (Order order : orders) {
-            if (order.getId() != null)
-                OrderDAO.delete(order.getId());
-        }
+        orders.stream().forEach(order -> OrderDAO.delete(order.getId()));
     }
 
     @Test
     void create() {
+        Date date = new Date();
 
         assertNull(orders.get(0).getId());
         Order orderInDB = OrderDAO.create(orders.get(0));
@@ -43,6 +42,10 @@ class OrderDAOTest {
 
         List<Order> checkedOrderInDBByCart = OrderDAO.findByCart(orderInDB.getCartId());
         assertNotNull(checkedOrderInDBByCart);
+
+        List<Order> checkedOrderInDBByUserAndPeriod  = OrderDAO.findClosedOrdersByUserAndPeriod
+                (orderInDB.getId(),date.getTime(), date.getTime());
+        assertNotNull(checkedOrderInDBByUserAndPeriod);
 
         OrderDAO.delete(checkedOrderInDB.getId());
         Order deletedUser = OrderDAO.findById(orderInDB.getId());

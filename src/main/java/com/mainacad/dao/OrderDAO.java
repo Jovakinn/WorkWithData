@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class OrderDAO {
+public class  OrderDAO {
 
     private static Logger logger = Logger.getLogger(OrderDAO.class.getName());
 
@@ -146,6 +146,31 @@ public class OrderDAO {
                 "c.creation_time<=? " +
                 "ORDER BY c.creation_time";
 
-        return null;
+        List<Order> orders = new ArrayList<>();
+
+        try (Connection connection = ConnectionToDB.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setLong(2, from);
+            preparedStatement.setLong(3, to);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Order order = new Order();
+
+                order.setId(resultSet.getInt("id"));
+                order.setItemId(resultSet.getInt("item_id"));
+                order.setAmount(resultSet.getInt("amount"));
+                order.setCartId(resultSet.getInt("cart_id"));
+
+                orders.add(order);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 }
